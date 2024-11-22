@@ -1,0 +1,50 @@
+name: CI/CD Pipeline for NestJS with SonarQube
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Cache yarn dependencies (optional, improves performance)
+      - name: Cache Yarn Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      # Install dependencies using Yarn
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      # Run tests with coverage
+      - name: Run Tests
+        run: yarn test --coverage 
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=es2-pm_es2-externo \
+            -Dsonar.sources=src \
+            -Dsonar.organization=es2-pm \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
