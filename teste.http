@@ -1,0 +1,8 @@
+post http://localhost:3000/enviarEmail
+Content-Type: application/json
+
+{
+    "email": "teste",
+    "assunto": "teste",
+    "mensagem": "teste"
+}

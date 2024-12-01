@@ -1,15 +1,16 @@
+import { Inject } from '@nestjs/common';
+import { MailerService } from './domain/mailer-service';
 import { EnviarEmailDto } from './dto/enviar-email.dto';
 
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    @Inject('MailerService') private readonly mailerService: MailerService,
+  ) {}
 
   async enviarEmail(enviarEmailDto: EnviarEmailDto) {
+    console.log('EmailService.enviarEmail', enviarEmailDto);
     const { email, assunto, mensagem } = enviarEmailDto;
 
-    await this.mailerService.sendMail({
-      to: email,
-      subject: assunto,
-      text: mensagem,
-    });
+    return this.mailerService.sendEmail(email, assunto, mensagem);
   }
 }
