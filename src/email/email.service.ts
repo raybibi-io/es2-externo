@@ -8,9 +8,7 @@ export class EmailService {
   ) {}
 
   async enviarEmail(enviarEmailDto: EnviarEmailDto) {
-    console.log('EmailService.enviarEmail', enviarEmailDto);
     const { email, assunto, mensagem } = enviarEmailDto;
-
     return this.mailerService.sendEmail(email, assunto, mensagem);
   }
 }
