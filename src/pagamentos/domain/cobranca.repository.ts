@@ -1,4 +1,4 @@
-import Cobranca from './cobranca';
+import { CobrancaEntity } from './cobranca.entity';
 
 export type CreateCobranca = {
   valor: number;
@@ -6,6 +6,6 @@ export type CreateCobranca = {
 };
 
 export interface CobrancaRepository {
-  save(cobranca: CreateCobranca): Promise<Cobranca>;
-  findById(id: number): Promise<Cobranca>;
+  save(cobranca: CreateCobranca): Promise<CobrancaEntity>;
+  findById(id: number): Promise<CobrancaEntity>;
 }

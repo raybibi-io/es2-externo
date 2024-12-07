@@ -14,5 +14,5 @@ export class TypeormCobrancaEntity {
   @Column()
   valor: number;
   @Column()
-  ciclistaId: number;
+  ciclista: number;
 }

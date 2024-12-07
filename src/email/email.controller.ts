@@ -1,13 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { EnviarEmailDto } from './dto/enviar-email.dto';
+import { SendEmailDto } from './dto/send-email.dto';
 import { EmailService } from './email.service';
 
-@Controller('enviarEmail')
+@Controller('sendEmail')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @Post()
-  async enviarEmail(@Body() enviarEmailDto: EnviarEmailDto) {
-    return this.emailService.enviarEmail(enviarEmailDto);
+  async sendEmail(@Body() sendEmailDto: SendEmailDto) {
+    return this.emailService.sendEmail(sendEmailDto);
   }
 }
