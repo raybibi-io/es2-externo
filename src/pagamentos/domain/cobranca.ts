@@ -1,7 +1,9 @@
+import { CobrancaEntity } from './cobranca.entity';
+
 export enum CobrancaStatus {
-  PENDENTE = 'pendente',
-  PAGA = 'paga',
-  CANCELADA = 'cancelada',
+  PENDENTE = 'PENDENTE',
+  PAGA = 'PAGA',
+  CANCELADA = 'CANCELADA',
 }
 
 export default class Cobranca {
@@ -9,6 +11,17 @@ export default class Cobranca {
   status: CobrancaStatus;
   horaSolicitacao: string;
   horaFinalizacao: string;
-  valor: string;
-  ciclista: string;
+  valor: number;
+  ciclista: number;
+
+  static toDomain(cobrancaEntity: CobrancaEntity) {
+    const cobranca = new Cobranca();
+
+    cobranca.id = cobrancaEntity.id;
+    cobranca.status = cobrancaEntity.status;
+    cobranca.valor = cobrancaEntity.valor;
+    cobranca.horaFinalizacao = cobrancaEntity.horaFinalizacao.toISOString();
+    cobranca.horaSolicitacao = cobrancaEntity.horaSolicitacao.toISOString();
+    cobranca.ciclista = cobrancaEntity.ciclistaId;
+  }
 }

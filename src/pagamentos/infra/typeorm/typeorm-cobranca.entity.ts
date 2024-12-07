@@ -1,11 +1,12 @@
+import { CobrancaStatus } from 'src/pagamentos/domain/cobranca';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('cobrancas')
-export class CobrancaEntity {
+export class TypeormCobrancaEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
-  status: string;
+  @Column({ type: 'varchar' })
+  status: CobrancaStatus;
   @Column()
   horaSolicitacao: Date;
   @Column()
@@ -13,5 +14,5 @@ export class CobrancaEntity {
   @Column()
   valor: number;
   @Column()
-  ciclista_id: number;
+  ciclistaId: number;
 }
