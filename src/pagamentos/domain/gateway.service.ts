@@ -6,6 +6,9 @@ export type CartaoDeCredito = {
 };
 
 export default interface GatewayService {
-  validarCartaoDeCredito(cartaoDeCredito: CartaoDeCredito): Promise<boolean>;
-  realizarPagamento(cartaoDeCredito: CartaoDeCredito): Promise<boolean>;
+  isCartaoDeCreditoValid(cartaoDeCredito: CartaoDeCredito): Promise<boolean>;
+  createPayment(
+    cartaoDeCredito: CartaoDeCredito,
+    price: number,
+  ): Promise<boolean>;
 }
