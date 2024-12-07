@@ -6,6 +6,7 @@ import {
 import { CobrancaEntity } from './domain/cobranca.entity';
 import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 import GatewayService from './domain/gateway.service';
+import { AppError, AppErrorType } from 'src/common/domain/app-error';
 
 @Injectable()
 export default class PagamentoService {
@@ -19,7 +20,10 @@ export default class PagamentoService {
   async getCobranca(idCobranca: number) {
     const cobranca = await this.cobrancaRepository.findById(idCobranca);
     if (!cobranca) {
-      throw new Error('Cobranca não encontrada');
+      throw new AppError(
+        'Cobranca não encontrada',
+        AppErrorType.RESOURCE_NOT_FOUND,
+      );
     }
     return CobrancaEntity.toDomain(cobranca);
   }

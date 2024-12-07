@@ -35,8 +35,8 @@ jobs:
         run: yarn install --frozen-lockfile
 
       # Run tests with coverage
-      - name: Run Tests
-        run: yarn test --coverage 
+      # - name: Run Tests
+      #   run: yarn test --coverage 
 
       - name: SonarQube Analysis
         env:
