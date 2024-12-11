@@ -8,6 +8,6 @@ export class EmailController {
 
   @Post()
   async sendEmail(@Body() sendEmailDto: SendEmailDto) {
-    return this.emailService.sendEmail(sendEmailDto);
+    return await this.emailService.sendEmail(sendEmailDto);
   }
 }

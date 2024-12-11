@@ -14,8 +14,8 @@ export default class PagamentoController {
   constructor(private readonly pagamentoService: PagamentoService) {}
 
   @Post('cobranca')
-  async createCobranca(@Body() createCobrancadto: CreateCobranca) {
-    return this.pagamentoService.createCobranca(createCobrancadto);
+  async createCobranca(@Body() createCobrancaDto: CreateCobranca) {
+    return this.pagamentoService.createCobranca(createCobrancaDto);
   }
   @Get('cobranca/:idCobranca')
   async getCobranca(@Param('idCobranca', ParseIntPipe) idCobranca: number) {
