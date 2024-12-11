@@ -7,9 +7,22 @@ import { CobrancaEntity } from './domain/cobranca.entity';
 import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 import GatewayService from './domain/gateway.service';
 import { AppError, AppErrorType } from 'src/common/domain/app-error';
+import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 
 @Injectable()
 export default class PagamentoService {
+  create(paymentData: CreateCobrancaDto) {
+    throw new Error('Method not implemented.');
+  }
+  update(arg0: number, arg1: { amount: number }): any {
+    throw new Error('Method not implemented.');
+  }
+  findById(arg0: number) {
+    throw new Error('Method not implemented.');
+  }
+  findAll() {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     @Inject('CobrancaRepository')
     private readonly cobrancaRepository: CobrancaRepository,

@@ -48,10 +48,10 @@ describe('EmailController', () => {
       };
 
       const result: Email = {
-        id: 1,
         email: 'test@example.com',
         assunto: 'Test Subject',
         mensagem: 'Test Body',
+        id: 0,
       };
       jest.spyOn(emailService, 'sendEmail').mockResolvedValue(result);
 
