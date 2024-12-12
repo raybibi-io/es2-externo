@@ -49,4 +49,4 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.exclusions=src//*.spec.ts \
-            -Dsonar.coverage.exclusions=src//*.spec.ts
+            -Dsonar.coverage.exclusions=src//*.spec.ts\
