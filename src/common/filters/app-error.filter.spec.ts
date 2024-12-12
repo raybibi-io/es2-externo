@@ -77,7 +77,10 @@ describe('AppErrorFilter', () => {
   });
 
   it('should return 400 for external service error types', () => {
-    const exception = new AppError('Unknown error', null);
+    const exception = new AppError(
+      'Unknown error',
+      AppErrorType.EXTERNAL_SERVICE_ERROR,
+    );
     const host = {
       switchToHttp: jest
         .fn()
@@ -86,7 +89,7 @@ describe('AppErrorFilter', () => {
 
     filter.catch(exception, host as any);
 
-    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.status).toHaveBeenCalledWith(400);
     expect(response.json).toHaveBeenCalledWith({
       codigo: '400',
       mensagem: 'Unknown error',
