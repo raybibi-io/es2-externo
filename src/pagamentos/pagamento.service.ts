@@ -36,7 +36,7 @@ export default class PagamentoService {
   async validarCartaoDeCredito(
     validaCartaoDeCreditoDto: ValidaCartaoDeCreditoDto,
   ) {
-    const validationResult = await this.gatewayService.isCartaoDeCreditoValido(
+    const validationResult = await this.gatewayService.isCartaoDeCreditoValid(
       validaCartaoDeCreditoDto,
     );
 

@@ -19,7 +19,7 @@ describe('PagamentoService', () => {
     } as unknown as CobrancaRepository;
 
     gatewayServiceMock = {
-      isCartaoDeCreditoValido: jest.fn(),
+      isCartaoDeCreditoValid: jest.fn(),
     } as unknown as GatewayService;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -96,7 +96,7 @@ describe('PagamentoService', () => {
       };
 
       const spyIsCartaoDeCreditoValido = jest
-        .spyOn(gatewayServiceMock, 'isCartaoDeCreditoValido')
+        .spyOn(gatewayServiceMock, 'isCartaoDeCreditoValid')
         .mockResolvedValue(true);
 
       await service.validarCartaoDeCredito(validaCartaoDeCreditoDto);
@@ -115,7 +115,7 @@ describe('PagamentoService', () => {
       };
 
       jest
-        .spyOn(gatewayServiceMock, 'isCartaoDeCreditoValido')
+        .spyOn(gatewayServiceMock, 'isCartaoDeCreditoValid')
         .mockResolvedValue(false);
 
       await expect(
