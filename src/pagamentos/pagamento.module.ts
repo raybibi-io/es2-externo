@@ -5,7 +5,6 @@ import { DataSource } from 'typeorm';
 import { TypeormCobrancaRepository } from './infra/typeorm/typeorm-cobranca-repository';
 import { TypeormCobrancaEntity } from './infra/typeorm/typeorm-cobranca.entity';
 import PagseguroGatewayService from './infra/pagseguro/pagseguro-gateway.service';
-import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 
 @Module({
@@ -22,16 +21,16 @@ import axios, { AxiosInstance } from 'axios';
     },
     {
       provide: 'AxiosClient',
-      useFactory: (configService: ConfigService) => {
+      useFactory: () => {
         return axios.create({
           baseURL: 'https://sandbox.api.pagseguro.com',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: configService.get('PAGSEGURO_AUTHORIZATION'),
+            Authorization:
+              'f246cc1e-ff4e-48d6-a228-7e389a0b77f4f116e5324fde943f75cb97e73031227388ff-e543-4a79-b4ab-8b1fbd179bf2',
           },
         });
       },
-      inject: [ConfigService],
     },
     {
       provide: 'GatewayService',

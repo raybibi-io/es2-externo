@@ -41,7 +41,10 @@ export default class PagamentoService {
     );
 
     if (!validationResult) {
-      throw new Error('Não foi possível validar cartão de crédito');
+      throw new AppError(
+        'Não foi possível validar cartão de crédito',
+        AppErrorType.EXTERNAL_SERVICE_ERROR,
+      );
     }
   }
 }
