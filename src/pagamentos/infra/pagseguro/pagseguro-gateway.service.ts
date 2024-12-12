@@ -61,7 +61,7 @@ export default class PagseguroGatewayService implements GatewayService {
     }
   }
 
-  private createPaymentObject(cartaoDeCredito: CartaoDeCredito, price: number) {
+  createPaymentObject(cartaoDeCredito: CartaoDeCredito, price: number) {
     const exp = cartaoDeCredito.validade.split('/');
     const requestBody = {
       reference_id: 'ex-00001',
@@ -88,7 +88,7 @@ export default class PagseguroGatewayService implements GatewayService {
     return requestBody;
   }
 
-  private processPaymentChargeResponse(data: any): PagseguroPaymentResponse {
+  processPaymentChargeResponse(data: any): PagseguroPaymentResponse {
     if (!data.id || !data.status) return null;
     return {
       id: data.id,
