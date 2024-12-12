@@ -11,13 +11,16 @@ import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 
 @Injectable()
 export default class PagamentoService {
-  create(paymentData: CreateCobrancaDto) {
+  delete(): any {
     throw new Error('Method not implemented.');
   }
-  update(arg0: number, arg1: { amount: number }): any {
+  create() {
     throw new Error('Method not implemented.');
   }
-  findById(arg0: number) {
+  update(): any {
+    throw new Error('Method not implemented.');
+  }
+  findById(): any {
     throw new Error('Method not implemented.');
   }
   findAll() {
@@ -49,7 +52,7 @@ export default class PagamentoService {
   async validarCartaoDeCredito(
     validaCartaoDeCreditoDto: ValidaCartaoDeCreditoDto,
   ) {
-    const validationResult = await this.gatewayService.isCartaoDeCreditoValid(
+    const validationResult = await this.gatewayService.isCartaoDeCreditoValido(
       validaCartaoDeCreditoDto,
     );
 

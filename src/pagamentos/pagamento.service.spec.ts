@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import PagamentoService from './pagamento.service';
-import { CobrancaStatus } from './domain/cobranca';
+import Cobranca, { CobrancaStatus } from './domain/cobranca';
 import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 
 const mockPagamentoRepository = {
@@ -25,31 +25,30 @@ describe('PagamentoService', () => {
     pagamentoService = module.get<PagamentoService>(PagamentoService);
   });
 
-  describe('create', () => {
-    it('create a new payment', async () => {
-      const paymentData: CreateCobrancaDto = {
+  describe('criar', () => {
+    it('deve criar um novo pagamento', async () => {
+      const dadosPagamento: CreateCobrancaDto = {
         valor: 100,
-        method: 'credit_card',
-        status: CobrancaStatus.PENDENTE,
+        ciclista: 1,
       };
 
       mockPagamentoRepository.create.mockResolvedValue({
         id: 1,
-        ...paymentData,
+        ...dadosPagamento,
       });
 
-      const result = await pagamentoService.create(paymentData);
+      const resultado = pagamentoService.create(dadosPagamento);
 
       expect(mockPagamentoRepository.create).toHaveBeenCalledWith(
-        expect.objectContaining(paymentData),
+        expect.objectContaining(dadosPagamento),
       );
-      expect(result).toBeInstanceOf(Pagamento);
-      expect(result).toHaveProperty('id', 1);
+      expect(resultado).toBeInstanceOf(Cobranca);
+      expect(resultado).toHaveProperty('id', 1);
     });
   });
 
-  describe('delete', () => {
-    it('should delete a payment if it exists', async () => {
+  describe('deletar', () => {
+    it('deve deletar um pagamento se existir', async () => {
       mockPagamentoRepository.findById.mockResolvedValue({
         id: 1,
         status: CobrancaStatus.PAGA,
@@ -62,7 +61,7 @@ describe('PagamentoService', () => {
       expect(mockPagamentoRepository.delete).toHaveBeenCalledWith(1);
     });
 
-    it('should throw an error if payment does not exist', async () => {
+    it('deve lançar um erro se o pagamento não existir', async () => {
       mockPagamentoRepository.findById.mockResolvedValue(null);
 
       await expect(pagamentoService.delete(1)).rejects.toThrow(
@@ -71,89 +70,90 @@ describe('PagamentoService', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update payment details if payment exists', async () => {
-      const payment = {
+  describe('atualizar', () => {
+    it('deve atualizar os detalhes do pagamento se ele existir', async () => {
+      const pagamento = {
         id: 1,
-        amount: 100,
-        method: 'cartao-de-credito',
+        valor: 100,
+        metodo: 'cartao_de_credito',
         status: CobrancaStatus.PENDENTE,
       };
-      const updatedData = { amount: 150, status: CobrancaStatus.PAGA };
+      const dadosAtualizados = { amount: 150 };
 
-      mockPagamentoRepository.findById.mockResolvedValue(payment);
+      mockPagamentoRepository.findById.mockResolvedValue(pagamento);
       mockPagamentoRepository.update.mockResolvedValue({
-        ...payment,
-        ...updatedData,
+        ...pagamento,
+        ...dadosAtualizados,
+        status: CobrancaStatus.PAGA,
       });
 
-      const result = await pagamentoService.update(1, updatedData);
+      const resultado = await pagamentoService.update(1, dadosAtualizados);
 
       expect(mockPagamentoRepository.findById).toHaveBeenCalledWith(1);
       expect(mockPagamentoRepository.update).toHaveBeenCalledWith(
         1,
-        updatedData,
+        dadosAtualizados,
       );
-      expect(result).toHaveProperty('amount', 150);
-      expect(result).toHaveProperty('status', CobrancaStatus.PAGA);
+      expect(resultado).toHaveProperty('valor', 150);
+      expect(resultado).toHaveProperty('status', CobrancaStatus.PAGA);
     });
 
-    it('should throw an error if payment does not exist', async () => {
+    it('deve lançar um erro se o pagamento não existir', async () => {
       mockPagamentoRepository.findById.mockResolvedValue(null);
 
-      await expect(pagamentoService.update(1, { amount: 150 })).rejects.toThrow(
-        'Payment not found',
+      await expect(pagamentoService.update(1, { valor: 150 })).rejects.toThrow(
+        'Pagamento não encontrado',
       );
     });
   });
 
-  describe('findAll', () => {
-    it('should return all payments', async () => {
-      const payments = [
+  describe('encontrarTodos', () => {
+    it('deve retornar todos os pagamentos', async () => {
+      const pagamentos = [
         {
           id: 1,
-          amount: 100,
-          method: 'cartao-de-credito',
+          valor: 100,
+          metodo: 'cartao_de_credito',
           status: CobrancaStatus.PAGA,
         },
         {
           id: 2,
-          amount: 200,
-          method: 'paypal',
+          valor: 200,
+          metodo: 'paypal',
           status: CobrancaStatus.PENDENTE,
         },
       ];
 
-      mockPagamentoRepository.findAll.mockResolvedValue(payments);
+      mockPagamentoRepository.findAll.mockResolvedValue(pagamentos);
 
-      const result = await pagamentoService.findAll();
+      const resultado = await pagamentoService.findAll();
 
       expect(mockPagamentoRepository.findAll).toHaveBeenCalled();
-      expect(result).toEqual(payments);
+      expect(resultado).toEqual(pagamentos);
     });
   });
 
-  describe('findById', () => {
-    it('should return a payment by ID', async () => {
-      const payment = {
+  describe('encontrarPorId', () => {
+    it('deve retornar um pagamento pelo ID', async () => {
+      const pagamento = {
         valor: 100,
-        method: 'cartao-de-credito',
+        metodo: 'cartao_de_credito',
         status: CobrancaStatus.PAGA,
       };
 
-      mockPagamentoRepository.findById.mockResolvedValue(payment);
+      mockPagamentoRepository.findById.mockResolvedValue(pagamento);
 
-      const result = await pagamentoService.findById(1);
+      const resultado = await pagamentoService.findById(1);
 
       expect(mockPagamentoRepository.findById).toHaveBeenCalledWith(1);
-      expect(result).toEqual(payment);
+      expect(resultado).toEqual(pagamento);
     });
 
-    it('should throw an error if payment is not found', async () => {
+    it('deve lançar um erro se o pagamento não for encontrado', async () => {
       mockPagamentoRepository.findById.mockResolvedValue(null);
 
       await expect(pagamentoService.findById(1)).rejects.toThrow(
-        'Payment not found',
+        'Pagamento não encontrado',
       );
     });
   });
