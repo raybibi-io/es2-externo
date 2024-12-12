@@ -8,9 +8,7 @@ import { CobrancaEntity } from 'src/pagamentos/domain/cobranca.entity';
 import { CobrancaStatus } from 'src/pagamentos/domain/cobranca';
 
 export class TypeormCobrancaRepository implements CobrancaRepository {
-  constructor(
-    private readonly ormRepository: Repository<TypeormCobrancaEntity>,
-  ) {}
+  constructor(private ormRepository: Repository<TypeormCobrancaEntity>) {}
   async save(cobranca: CreateCobranca): Promise<CobrancaEntity> {
     const cobrancaEntity = await this.ormRepository.save({
       status: CobrancaStatus.PAGA,
