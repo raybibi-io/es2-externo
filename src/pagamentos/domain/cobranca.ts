@@ -1,5 +1,3 @@
-import { CobrancaEntity } from './cobranca.entity';
-
 export enum CobrancaStatus {
   PENDENTE = 'PENDENTE',
   PAGA = 'PAGA',

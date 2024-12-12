@@ -7,25 +7,9 @@ import { CobrancaEntity } from './domain/cobranca.entity';
 import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 import GatewayService from './domain/gateway.service';
 import { AppError, AppErrorType } from 'src/common/domain/app-error';
-import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 
 @Injectable()
 export default class PagamentoService {
-  delete(): any {
-    throw new Error('Method not implemented.');
-  }
-  create() {
-    throw new Error('Method not implemented.');
-  }
-  update(): any {
-    throw new Error('Method not implemented.');
-  }
-  findById(): any {
-    throw new Error('Method not implemented.');
-  }
-  findAll() {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     @Inject('CobrancaRepository')
     private readonly cobrancaRepository: CobrancaRepository,
@@ -59,7 +43,5 @@ export default class PagamentoService {
     if (!validationResult) {
       throw new Error('Não foi possível validar cartão de crédito');
     }
-
-    return;
   }
 }

@@ -1,159 +1,127 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import PagamentoService from './pagamento.service';
-import Cobranca, { CobrancaStatus } from './domain/cobranca';
-import { CreateCobrancaDto } from './dto/create-cobranca.dto';
-
-const mockPagamentoRepository = {
-  create: jest.fn(),
-  delete: jest.fn(),
-  update: jest.fn(),
-  findById: jest.fn(),
-  findAll: jest.fn(),
-};
+import { CobrancaRepository } from './domain/cobranca.repository';
+import { CobrancaEntity } from './domain/cobranca.entity';
+import { CobrancaStatus } from './domain/cobranca';
+import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
+import GatewayService from './domain/gateway.service';
 
 describe('PagamentoService', () => {
-  let pagamentoService: PagamentoService;
+  let service: PagamentoService;
+  let cobrancaRepositoryMock: CobrancaRepository;
+  let gatewayServiceMock: GatewayService;
 
   beforeEach(async () => {
+    // Criando mocks para as dependências
+    cobrancaRepositoryMock = {
+      findById: jest.fn(),
+      save: jest.fn(),
+    } as unknown as CobrancaRepository;
+
+    gatewayServiceMock = {
+      isCartaoDeCreditoValido: jest.fn(),
+    } as unknown as GatewayService;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PagamentoService,
-        { provide: 'PagamentoRepository', useValue: mockPagamentoRepository },
+        { provide: 'CobrancaRepository', useValue: cobrancaRepositoryMock },
+        { provide: 'GatewayService', useValue: gatewayServiceMock },
       ],
     }).compile();
 
-    pagamentoService = module.get<PagamentoService>(PagamentoService);
+    service = module.get<PagamentoService>(PagamentoService);
   });
 
-  describe('criar', () => {
-    it('deve criar um novo pagamento', async () => {
-      const dadosPagamento: CreateCobrancaDto = {
+  describe('getCobranca', () => {
+    it('deve retornar uma cobrança quando encontrada', async () => {
+      const cobrancaEntity: CobrancaEntity = {
+        id: 1,
+        status: CobrancaStatus.PENDENTE,
+        horaSolicitacao: new Date(),
+        horaFinalizacao: new Date(),
         valor: 100,
         ciclista: 1,
       };
 
-      mockPagamentoRepository.create.mockResolvedValue({
-        id: 1,
-        ...dadosPagamento,
-      });
+      const spyFindById = jest
+        .spyOn(cobrancaRepositoryMock, 'findById')
+        .mockResolvedValue(cobrancaEntity);
 
-      const resultado = pagamentoService.create(dadosPagamento);
+      const result = await service.getCobranca(1);
 
-      expect(mockPagamentoRepository.create).toHaveBeenCalledWith(
-        expect.objectContaining(dadosPagamento),
-      );
-      expect(resultado).toBeInstanceOf(Cobranca);
-      expect(resultado).toHaveProperty('id', 1);
-    });
-  });
-
-  describe('deletar', () => {
-    it('deve deletar um pagamento se existir', async () => {
-      mockPagamentoRepository.findById.mockResolvedValue({
-        id: 1,
-        status: CobrancaStatus.PAGA,
-      });
-      mockPagamentoRepository.delete.mockResolvedValue(undefined);
-
-      await pagamentoService.delete(1);
-
-      expect(mockPagamentoRepository.findById).toHaveBeenCalledWith(1);
-      expect(mockPagamentoRepository.delete).toHaveBeenCalledWith(1);
+      expect(result).toEqual(CobrancaEntity.toDomain(cobrancaEntity));
+      expect(spyFindById).toHaveBeenCalledWith(1);
     });
 
-    it('deve lançar um erro se o pagamento não existir', async () => {
-      mockPagamentoRepository.findById.mockResolvedValue(null);
+    it('deve lançar erro quando cobrança não for encontrada', async () => {
+      jest.spyOn(cobrancaRepositoryMock, 'findById').mockResolvedValue(null);
 
-      await expect(pagamentoService.delete(1)).rejects.toThrow(
-        'Cobrança não encontrada',
+      await expect(service.getCobranca(1)).rejects.toThrow(
+        'Cobranca não encontrada',
       );
     });
   });
 
-  describe('atualizar', () => {
-    it('deve atualizar os detalhes do pagamento se ele existir', async () => {
-      const pagamento = {
+  describe('createCobranca', () => {
+    it('deve criar uma nova cobrança', async () => {
+      const createCobrancaDto = { valor: 100, ciclista: 1 };
+      const cobrancaEntity: CobrancaEntity = {
         id: 1,
-        valor: 100,
-        metodo: 'cartao_de_credito',
         status: CobrancaStatus.PENDENTE,
-      };
-      const dadosAtualizados = { amount: 150 };
-
-      mockPagamentoRepository.findById.mockResolvedValue(pagamento);
-      mockPagamentoRepository.update.mockResolvedValue({
-        ...pagamento,
-        ...dadosAtualizados,
-        status: CobrancaStatus.PAGA,
-      });
-
-      const resultado = await pagamentoService.update(1, dadosAtualizados);
-
-      expect(mockPagamentoRepository.findById).toHaveBeenCalledWith(1);
-      expect(mockPagamentoRepository.update).toHaveBeenCalledWith(
-        1,
-        dadosAtualizados,
-      );
-      expect(resultado).toHaveProperty('valor', 150);
-      expect(resultado).toHaveProperty('status', CobrancaStatus.PAGA);
-    });
-
-    it('deve lançar um erro se o pagamento não existir', async () => {
-      mockPagamentoRepository.findById.mockResolvedValue(null);
-
-      await expect(pagamentoService.update(1, { valor: 150 })).rejects.toThrow(
-        'Pagamento não encontrado',
-      );
-    });
-  });
-
-  describe('encontrarTodos', () => {
-    it('deve retornar todos os pagamentos', async () => {
-      const pagamentos = [
-        {
-          id: 1,
-          valor: 100,
-          metodo: 'cartao_de_credito',
-          status: CobrancaStatus.PAGA,
-        },
-        {
-          id: 2,
-          valor: 200,
-          metodo: 'paypal',
-          status: CobrancaStatus.PENDENTE,
-        },
-      ];
-
-      mockPagamentoRepository.findAll.mockResolvedValue(pagamentos);
-
-      const resultado = await pagamentoService.findAll();
-
-      expect(mockPagamentoRepository.findAll).toHaveBeenCalled();
-      expect(resultado).toEqual(pagamentos);
-    });
-  });
-
-  describe('encontrarPorId', () => {
-    it('deve retornar um pagamento pelo ID', async () => {
-      const pagamento = {
+        horaSolicitacao: new Date(),
+        horaFinalizacao: new Date(),
         valor: 100,
-        metodo: 'cartao_de_credito',
-        status: CobrancaStatus.PAGA,
+        ciclista: 1,
       };
 
-      mockPagamentoRepository.findById.mockResolvedValue(pagamento);
+      const spySave = jest
+        .spyOn(cobrancaRepositoryMock, 'save')
+        .mockResolvedValue(cobrancaEntity);
 
-      const resultado = await pagamentoService.findById(1);
+      const result = await service.createCobranca(createCobrancaDto);
 
-      expect(mockPagamentoRepository.findById).toHaveBeenCalledWith(1);
-      expect(resultado).toEqual(pagamento);
+      expect(result).toEqual(CobrancaEntity.toDomain(cobrancaEntity));
+      expect(spySave).toHaveBeenCalledWith(createCobrancaDto);
+    });
+  });
+
+  describe('validarCartaoDeCredito', () => {
+    it('deve validar o cartão de crédito com sucesso', async () => {
+      const validaCartaoDeCreditoDto: ValidaCartaoDeCreditoDto = {
+        nomeTitular: 'John Doe',
+        numero: '1234567890123456',
+        validade: '12/24',
+        cvv: '123',
+      };
+
+      const spyIsCartaoDeCreditoValido = jest
+        .spyOn(gatewayServiceMock, 'isCartaoDeCreditoValido')
+        .mockResolvedValue(true);
+
+      await service.validarCartaoDeCredito(validaCartaoDeCreditoDto);
+
+      expect(spyIsCartaoDeCreditoValido).toHaveBeenCalledWith(
+        validaCartaoDeCreditoDto,
+      );
     });
 
-    it('deve lançar um erro se o pagamento não for encontrado', async () => {
-      mockPagamentoRepository.findById.mockResolvedValue(null);
+    it('deve lançar erro quando a validação do cartão falhar', async () => {
+      const validaCartaoDeCreditoDto: ValidaCartaoDeCreditoDto = {
+        nomeTitular: 'John Doe',
+        numero: '1234567890123456',
+        validade: '12/24',
+        cvv: '123',
+      };
 
-      await expect(pagamentoService.findById(1)).rejects.toThrow(
-        'Pagamento não encontrado',
+      jest
+        .spyOn(gatewayServiceMock, 'isCartaoDeCreditoValido')
+        .mockResolvedValue(false);
+
+      await expect(
+        service.validarCartaoDeCredito(validaCartaoDeCreditoDto),
+      ).rejects.toThrow(
+        new Error('Não foi possível validar cartão de crédito'),
       );
     });
   });
