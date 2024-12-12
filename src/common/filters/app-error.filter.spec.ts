@@ -75,4 +75,21 @@ describe('AppErrorFilter', () => {
       mensagem: 'Unknown error',
     });
   });
+
+  it('should return 400 for external service error types', () => {
+    const exception = new AppError('Unknown error', null);
+    const host = {
+      switchToHttp: jest
+        .fn()
+        .mockReturnValue({ getResponse: jest.fn().mockReturnValue(response) }),
+    };
+
+    filter.catch(exception, host as any);
+
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({
+      codigo: '400',
+      mensagem: 'Unknown error',
+    });
+  });
 });

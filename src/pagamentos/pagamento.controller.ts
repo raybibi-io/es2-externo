@@ -7,15 +7,15 @@ import {
   Post,
 } from '@nestjs/common';
 import PagamentoService from './pagamento.service';
-import { CreateCobranca } from './domain/cobranca.repository';
 import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
+import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 
 @Controller()
 export default class PagamentoController {
   constructor(private readonly pagamentoService: PagamentoService) {}
 
   @Post('cobranca')
-  async createCobranca(@Body() createCobrancaDto: CreateCobranca) {
+  async createCobranca(@Body() createCobrancaDto: CreateCobrancaDto) {
     return this.pagamentoService.createCobranca(createCobrancaDto);
   }
   @Get('cobranca/:idCobranca')

@@ -1,12 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  CobrancaRepository,
-  CreateCobranca,
-} from './domain/cobranca.repository';
+import { CobrancaRepository } from './domain/cobranca.repository';
 import { CobrancaEntity } from './domain/cobranca.entity';
 import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 import GatewayService from './domain/gateway.service';
 import { AppError, AppErrorType } from 'src/common/domain/app-error';
+import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 
 @Injectable()
 export default class PagamentoService {
@@ -28,7 +26,7 @@ export default class PagamentoService {
     return CobrancaEntity.toDomain(cobranca);
   }
 
-  async createCobranca(createCobrancaDto: CreateCobranca) {
+  async createCobranca(createCobrancaDto: CreateCobrancaDto) {
     const cobranca = await this.cobrancaRepository.save(createCobrancaDto);
     return CobrancaEntity.toDomain(cobranca);
   }
