@@ -1,14 +1,13 @@
-import { Module } from '@nestjs/common';
 import EmailModule from './email/email.module';
-import { DatabaseModule } from './database/database.module';
 import PagamentoModule from './pagamentos/pagamento.module';
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import secretManagerConfig from './common/secret-manager.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [secretManagerConfig] }),
+    ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRoot({
       transport: {
         host: 'sandbox.smtp.mailtrap.io',
