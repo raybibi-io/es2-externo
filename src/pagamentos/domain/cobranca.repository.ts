@@ -10,4 +10,5 @@ export type CreateCobranca = {
 export interface CobrancaRepository {
   save(cobranca: CreateCobranca): Promise<CobrancaEntity>;
   findById(id: number): Promise<CobrancaEntity>;
+  getCobrancasPendentes(): Promise<CobrancaEntity[]>;
 }

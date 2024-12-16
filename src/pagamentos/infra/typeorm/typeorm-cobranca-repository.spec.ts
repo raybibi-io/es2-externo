@@ -18,6 +18,7 @@ describe('TypeormCobrancaRepository', () => {
   describe('save', () => {
     it('should save a cobranca entity and return it', async () => {
       const createCobranca = {
+        status: CobrancaStatus.PAGA,
         valor: 100,
         ciclista: 1,
       };

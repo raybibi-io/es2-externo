@@ -17,6 +17,25 @@ export default class PagamentoService {
     private readonly gatewayService: GatewayService,
     private readonly cartaoDeCreditoService: CartaoDeCreditoService,
   ) {}
+  async processaCobranca() {
+    const cobrancasPendentes =
+      await this.cobrancaRepository.getCobrancasPendentes();
+    for (const cobranca of cobrancasPendentes) {
+      const cartaoDeCredito =
+        await this.cartaoDeCreditoService.getCartaoDeCredito(cobranca.ciclista);
+      const resultadoCobranca = await this.gatewayService.createPayment(
+        cartaoDeCredito,
+        cobranca.valor,
+      );
+      if (!resultadoCobranca) {
+        continue;
+      }
+      await this.cobrancaRepository.save({
+        ...cobranca,
+        status: CobrancaStatus.PAGA,
+      });
+    }
+  }
 
   async filaCobranca(createCobrancaDto: CreateCobrancaDto) {
     const cobranca = await this.cobrancaRepository.save({
