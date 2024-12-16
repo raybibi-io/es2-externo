@@ -9,7 +9,7 @@ export class TypeormCobrancaEntity {
   status: CobrancaStatus;
   @Column()
   horaSolicitacao: Date;
-  @Column()
+  @Column({ nullable: true })
   horaFinalizacao: Date;
   @Column()
   valor: number;

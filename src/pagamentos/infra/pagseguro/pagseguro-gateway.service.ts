@@ -54,7 +54,11 @@ export default class PagseguroGatewayService implements GatewayService {
   ): Promise<boolean> {
     const requestBody = this.createPaymentObject(cartaoDeCredito, price);
     try {
-      await this.axiosClient.post('/charges', requestBody);
+      const response = await this.axiosClient.post('/charges', requestBody);
+
+      const paymentProcessed = this.processPaymentChargeResponse(response.data);
+      if (paymentProcessed.status !== 'AUTHORIZED') throw new Error();
+
       return true;
     } catch {
       return false;

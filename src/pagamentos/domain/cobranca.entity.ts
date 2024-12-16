@@ -6,7 +6,9 @@ export class CobrancaEntity {
     cobranca.id = cobrancaEntity.id;
     cobranca.status = cobrancaEntity.status;
     cobranca.horaSolicitacao = cobrancaEntity.horaSolicitacao.toISOString();
-    cobranca.horaFinalizacao = cobrancaEntity.horaFinalizacao.toISOString();
+    cobranca.horaFinalizacao = '';
+    if (cobranca.horaFinalizacao)
+      cobranca.horaFinalizacao = cobrancaEntity.horaFinalizacao.toISOString();
     cobranca.valor = cobrancaEntity.valor;
     cobranca.ciclista = cobrancaEntity.ciclista;
     return cobranca;
