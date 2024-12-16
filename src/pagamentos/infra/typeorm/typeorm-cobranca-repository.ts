@@ -1,6 +1,7 @@
 import {
   CobrancaRepository,
   CreateCobranca,
+  UpdateCobranca,
 } from 'src/pagamentos/domain/cobranca.repository';
 import { TypeormCobrancaEntity } from './typeorm-cobranca.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +12,9 @@ export class TypeormCobrancaRepository implements CobrancaRepository {
   constructor(
     private readonly ormRepository: Repository<TypeormCobrancaEntity>,
   ) {}
+  async update(id: number, cobranca: UpdateCobranca): Promise<void> {
+    await this.ormRepository.update(id, cobranca);
+  }
   async getCobrancasPendentes(): Promise<CobrancaEntity[]> {
     return this.ormRepository.find({
       where: { status: CobrancaStatus.PENDENTE },

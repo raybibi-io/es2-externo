@@ -2,10 +2,10 @@ export class CartaoDeCreditoService {
   getCartaoDeCredito(idCiclista: number) {
     console.log(idCiclista);
     return {
-      nomeTitular: 'Jose da Silva',
-      numero: '372938001199778',
-      cvv: '1234',
-      validade: '03/2026',
+      nomeTitular: 'Fulano de Tal',
+      numero: '4539620659922097',
+      cvv: '123',
+      validade: '12/2026',
     };
   }
 }

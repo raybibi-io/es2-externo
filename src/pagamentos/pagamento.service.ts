@@ -18,6 +18,7 @@ export default class PagamentoService {
     private readonly cartaoDeCreditoService: CartaoDeCreditoService,
   ) {}
   async processaCobranca() {
+    const cobrancasPagas = [];
     const cobrancasPendentes =
       await this.cobrancaRepository.getCobrancasPendentes();
     for (const cobranca of cobrancasPendentes) {
@@ -30,11 +31,12 @@ export default class PagamentoService {
       if (!resultadoCobranca) {
         continue;
       }
-      await this.cobrancaRepository.save({
-        ...cobranca,
-        status: CobrancaStatus.PAGA,
-      });
+      cobranca.status = CobrancaStatus.PAGA;
+      cobranca.horaFinalizacao = new Date();
+      await this.cobrancaRepository.update(cobranca.id, cobranca);
+      cobrancasPagas.push(CobrancaEntity.toDomain(cobranca));
     }
+    return cobrancasPagas;
   }
 
   async filaCobranca(createCobrancaDto: CreateCobrancaDto) {

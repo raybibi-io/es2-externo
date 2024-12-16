@@ -33,11 +33,12 @@ export default class PagamentoController {
   }
 
   @Post('/filaCobranca')
-  async filaCobranca(createCobrancaDto: CreateCobrancaDto) {
+  async filaCobranca(@Body() createCobrancaDto: CreateCobrancaDto) {
     return this.pagamentoService.filaCobranca(createCobrancaDto);
   }
-  // @Post('/processaCobranca')
-  // async processaCobranca(createCobrancaDto: CreateCobrancaDto) {
-  //   return this.pagamentoService.processaCobranca(createCobrancaDto);
-  // }
+
+  @Post('/processaCobrancasEmFila')
+  async processaCobranca() {
+    return this.pagamentoService.processaCobranca();
+  }
 }
