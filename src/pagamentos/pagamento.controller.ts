@@ -31,4 +31,9 @@ export default class PagamentoController {
       validaCartaoDeCreditoDto,
     );
   }
+
+  @Post('/filaCobranca')
+  async filaCobranca(createCobrancaDto: CreateCobrancaDto) {
+    return this.pagamentoService.filaCobranca(createCobrancaDto);
+  }
 }

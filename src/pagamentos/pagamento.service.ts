@@ -5,6 +5,8 @@ import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 import GatewayService from './domain/gateway.service';
 import { AppError, AppErrorType } from 'src/common/domain/app-error';
 import { CreateCobrancaDto } from './dto/create-cobranca.dto';
+import { CobrancaStatus } from './domain/cobranca';
+import { CartaoDeCreditoService } from 'src/common/utils/cartao-de-credito.service';
 
 @Injectable()
 export default class PagamentoService {
@@ -13,7 +15,16 @@ export default class PagamentoService {
     private readonly cobrancaRepository: CobrancaRepository,
     @Inject('GatewayService')
     private readonly gatewayService: GatewayService,
+    private readonly cartaoDeCreditoService: CartaoDeCreditoService,
   ) {}
+
+  async filaCobranca(createCobrancaDto: CreateCobrancaDto) {
+    const cobranca = await this.cobrancaRepository.save({
+      ...createCobrancaDto,
+      status: CobrancaStatus.PENDENTE,
+    });
+    return cobranca;
+  }
 
   async getCobranca(idCobranca: number) {
     const cobranca = await this.cobrancaRepository.findById(idCobranca);
@@ -27,7 +38,25 @@ export default class PagamentoService {
   }
 
   async createCobranca(createCobrancaDto: CreateCobrancaDto) {
-    const cobranca = await this.cobrancaRepository.save(createCobrancaDto);
+    const cartaoDeCredito =
+      await this.cartaoDeCreditoService.getCartaoDeCredito(
+        createCobrancaDto.ciclista,
+      );
+    const resultadoCobranca = await this.gatewayService.createPayment(
+      cartaoDeCredito,
+      createCobrancaDto.valor,
+    );
+    if (!resultadoCobranca) {
+      const cobranca = await this.cobrancaRepository.save({
+        ...createCobrancaDto,
+        status: CobrancaStatus.PENDENTE,
+      });
+      return CobrancaEntity.toDomain(cobranca);
+    }
+    const cobranca = await this.cobrancaRepository.save({
+      ...createCobrancaDto,
+      status: CobrancaStatus.PAGA,
+    });
     return CobrancaEntity.toDomain(cobranca);
   }
 

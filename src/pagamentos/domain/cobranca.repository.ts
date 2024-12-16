@@ -1,6 +1,8 @@
+import { CobrancaStatus } from './cobranca';
 import { CobrancaEntity } from './cobranca.entity';
 
 export type CreateCobranca = {
+  status: CobrancaStatus;
   valor: number;
   ciclista: number;
 };

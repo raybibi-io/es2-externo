@@ -13,10 +13,10 @@ export class TypeormCobrancaRepository implements CobrancaRepository {
   ) {}
   async save(cobranca: CreateCobranca): Promise<CobrancaEntity> {
     const cobrancaEntity = await this.ormRepository.save({
-      status: CobrancaStatus.PAGA,
+      status: cobranca.status,
       horaSolicitacao: new Date(),
-      horaFinalizacao: new Date(),
-
+      horaFinalizacao:
+        cobranca.status == CobrancaStatus.PAGA ? new Date() : null,
       valor: cobranca.valor,
       ciclista: cobranca.ciclista,
     });

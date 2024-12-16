@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    //Instância do módulo MailerService
     MailerModule.forRoot({
       transport: {
         host: 'sandbox.smtp.mailtrap.io',

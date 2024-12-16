@@ -6,10 +6,12 @@ import { TypeormCobrancaRepository } from './infra/typeorm/typeorm-cobranca-repo
 import { TypeormCobrancaEntity } from './infra/typeorm/typeorm-cobranca.entity';
 import PagseguroGatewayService from './infra/pagseguro/pagseguro-gateway.service';
 import axios, { AxiosInstance } from 'axios';
+import { CartaoDeCreditoService } from 'src/common/utils/cartao-de-credito.service';
 
 @Module({
   providers: [
     PagamentoService,
+    CartaoDeCreditoService,
     {
       provide: 'CobrancaRepository',
       useFactory: (dataSource: DataSource) => {
