@@ -50,7 +50,7 @@ export default class PagamentoService {
       ...createCobrancaDto,
       status: CobrancaStatus.PENDENTE,
     });
-    return cobranca;
+    return CobrancaEntity.toDomain(cobranca);
   }
 
   async getCobranca(idCobranca: number) {

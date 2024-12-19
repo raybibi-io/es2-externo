@@ -76,9 +76,9 @@ describe('PagseguroGatewayService', () => {
       };
 
       // Simula a resposta bem-sucedida da requisição POST
-      jest
-        .spyOn(axiosClient, 'post')
-        .mockResolvedValueOnce({ data: { id: 'charge-id' } });
+      jest.spyOn(axiosClient, 'post').mockResolvedValueOnce({
+        data: { id: 'charge-id', status: 'AUTHORIZED' },
+      });
 
       const result = await service.createPayment(cartaoDeCredito, 100);
       expect(result).toBe(true);
