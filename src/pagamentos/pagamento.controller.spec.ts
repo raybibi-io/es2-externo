@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import PagamentoService from './pagamento.service';
-import { CreateCobranca } from './domain/cobranca.repository';
-import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 import { CobrancaStatus } from './domain/cobranca';
 import { CobrancaEntity } from './domain/cobranca.entity';
+import { CreateCobrancaDto } from './dto/create-cobranca.dto';
 import PagamentoController from './pagamento.controller';
+import PagamentoService from './pagamento.service';
+import ValidaCartaoDeCreditoDto from './dto/valida-cartao-de-credito.dto';
 
 describe('PagamentoController', () => {
   let pagamentoController: PagamentoController;
@@ -31,7 +31,7 @@ describe('PagamentoController', () => {
 
   describe('createCobranca', () => {
     it('should create a cobranca', async () => {
-      const createCobrancaDto: CreateCobranca = {
+      const createCobrancaDto: CreateCobrancaDto = {
         ciclista: 1,
         valor: 20,
       };

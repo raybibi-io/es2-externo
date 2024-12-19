@@ -21,21 +21,27 @@ export default class PagamentoService {
     const cobrancasPagas = [];
     const cobrancasPendentes =
       await this.cobrancaRepository.getCobrancasPendentes();
+
     for (const cobranca of cobrancasPendentes) {
-      const cartaoDeCredito =
-        await this.cartaoDeCreditoService.getCartaoDeCredito(cobranca.ciclista);
+      const cartaoDeCredito = this.cartaoDeCreditoService.getCartaoDeCredito(
+        cobranca.ciclista,
+      );
+
       const resultadoCobranca = await this.gatewayService.createPayment(
         cartaoDeCredito,
         cobranca.valor,
       );
+
       if (!resultadoCobranca) {
         continue;
       }
+
       cobranca.status = CobrancaStatus.PAGA;
       cobranca.horaFinalizacao = new Date();
       await this.cobrancaRepository.update(cobranca.id, cobranca);
       cobrancasPagas.push(CobrancaEntity.toDomain(cobranca));
     }
+
     return cobrancasPagas;
   }
 
@@ -59,14 +65,15 @@ export default class PagamentoService {
   }
 
   async createCobranca(createCobrancaDto: CreateCobrancaDto) {
-    const cartaoDeCredito =
-      await this.cartaoDeCreditoService.getCartaoDeCredito(
-        createCobrancaDto.ciclista,
-      );
+    const cartaoDeCredito = this.cartaoDeCreditoService.getCartaoDeCredito(
+      createCobrancaDto.ciclista,
+    );
+
     const resultadoCobranca = await this.gatewayService.createPayment(
       cartaoDeCredito,
       createCobrancaDto.valor,
     );
+
     if (!resultadoCobranca) {
       const cobranca = await this.cobrancaRepository.save({
         ...createCobrancaDto,
@@ -74,6 +81,7 @@ export default class PagamentoService {
       });
       return CobrancaEntity.toDomain(cobranca);
     }
+
     const cobranca = await this.cobrancaRepository.save({
       ...createCobrancaDto,
       status: CobrancaStatus.PAGA,
